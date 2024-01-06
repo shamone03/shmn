@@ -2,15 +2,13 @@
 #include <optional>
 
 namespace window {
-	constexpr auto WIDTH = 1200;
-	constexpr auto HEIGHT = 1200;
-	std::optional<GLFWwindow*> initialize_window() {
+	std::optional<GLFWwindow*> initialize_window(const int width, const int height) {
 		glfwInit();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Hi", NULL, NULL);
+		GLFWwindow* window = glfwCreateWindow(width, height, "Hi", NULL, NULL);
 		if (window == nullptr) {
 			std::cout << "No window" << std::endl;
 			glfwTerminate();
@@ -23,14 +21,14 @@ namespace window {
 			std::cout << "No GLAD" << std::endl;
 			return std::nullopt;
 		}
-		glViewport(0, 0, WIDTH, HEIGHT);
+		glViewport(0, 0, width, height);
 
 		return window;
 	}
 }
 
 int main() {
-	const auto window = window::initialize_window();
+	const auto window = window::initialize_window(1200, 1200);
 	
 	if (!window.has_value()) return 1;
 	

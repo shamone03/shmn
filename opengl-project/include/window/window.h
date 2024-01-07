@@ -4,4 +4,5 @@
 
 namespace shmn::window {
     std::optional<GLFWwindow*> initialize_window(const int width, const int height);
+    void close_window();
 }

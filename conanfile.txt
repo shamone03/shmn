@@ -1,6 +1,7 @@
 [requires]
 glad/0.1.36
 glfw/3.3.8
+stb/cci.20230920
 
 [options]
 glad/*:gl_version=4.6

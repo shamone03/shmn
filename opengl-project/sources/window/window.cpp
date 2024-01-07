@@ -11,7 +11,7 @@ std::optional<GLFWwindow*> shmn::window::initialize_window(const int width, cons
 
     GLFWwindow* window = glfwCreateWindow(width, height, "Hi", NULL, NULL);
     if (window == nullptr) {
-        std::cout << "No window" << std::endl;
+        std::cerr << "No window" << std::endl;
         glfwTerminate();
         throw std::runtime_error("No window");
     }
@@ -19,10 +19,14 @@ std::optional<GLFWwindow*> shmn::window::initialize_window(const int width, cons
     glfwMakeContextCurrent(window);
 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
-        std::cout << "No GLAD" << std::endl;
+        std::cerr << "No GLAD" << std::endl;
         throw std::runtime_error("No GLAD");
     }
     glViewport(0, 0, width, height);
 
     return window;
+}
+
+void shmn::window::close_window() {
+    glfwTerminate();
 }

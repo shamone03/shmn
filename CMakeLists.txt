@@ -7,12 +7,14 @@ find_package(glad REQUIRED CONFIG)
 set(SOURCES 
     ${PROJECT_NAME}/sources/main.cpp
     ${PROJECT_NAME}/sources/window/window.cpp
-    ${PROJECT_NAME}/sources/shader_tools/shader_tools.cpp
+    ${PROJECT_NAME}/sources/shader/shader_tools/shader_tools.cpp
+    ${PROJECT_NAME}/sources/shader/shader.cpp
 )
 set(INCLUDE 
     ${PROJECT_NAME}/include/main.h
     ${PROJECT_NAME}/include/window/window.h
-    ${PROJECT_NAME}/include/shader_tools/shader_tools.h
+    ${PROJECT_NAME}/include/shader/shader_tools/shader_tools.h
+    ${PROJECT_NAME}/include/shader/shader.h
 )
 set(SHADERS
 	${PROJECT_NAME}/resources/shaders/frag.glsl

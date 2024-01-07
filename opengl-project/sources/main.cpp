@@ -3,56 +3,13 @@
 #include <fstream>
 #include <string>
 
-#include <window/window.h>
-#include <shader_tools/shader_tools.h>
-
-// const char* vertexShaderSource =
-// 	"#version 460 core\n"
-// 	"layout (location = 0) in vec3 pos;\n"
-// 	"out vec4 color;\n"
-// 	"void main() {\n"
-// 	"	gl_Position = vec4(pos.x, pos.y, pos.z, 1);\n"
-// 	"	color = vec4(pos, 1);\n"
-// 	"}\0";
-//
-// const char* fragShaderSource =
-// 	"#version 460 core\n"
-// 	"out vec4 FragColor;\n"
-// 	"in vec4 color;\n"
-// 	"void main() {\n"
-// 	"	FragColor = color;\n"
-// 	"}\0";
-
-const std::string vertexShaderSource = R"(
-	#version 460 core
-	layout (location = 0) in vec3 pos;
-	layout (location = 1) in vec3 color;
-	
-	out vec4 vertColor;
-
-	void main() {
-	    gl_Position = vec4(pos, 1);
-		vertColor = vec4(color, 1);
-	}
-)";
-
-const std::string fragShaderSource = R"(
-	#version 460 core
-	out vec4 outColor;
-	in vec4 vertColor;
-
-	uniform vec4 setColor;
-
-	void main() {
-	    outColor = vertColor;
-		
-	}
-)";
+#include "shader/shader.h"
+#include "window/window.h"
 
 int main() {
 	const auto window = window::initialize_window(1200, 1200);
-	const auto programID = shader_tools::create_program(vertexShaderSource.c_str(), fragShaderSource.c_str());
-	if (!programID.has_value() || !window.has_value()) return 1;
+
+	const Shader shader("vert.glsl", "frag.glsl"); 
 
 	// const auto colorUniformLocation = glGetUniformLocation(*programID, "setColor");
 
@@ -99,8 +56,8 @@ int main() {
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(*programID);
-
+		shader.use();
+		shader.set_float("setAslpha", std::abs(std::sin(glfwGetTime())));
 		// glUniform4f(colorUniformLocation, red, std::abs(std::cos(glfwGetTime())), red, 1.0f);
 		
 		glBindVertexArray(vaoID);

@@ -13,14 +13,14 @@ std::optional<GLFWwindow*> window::initialize_window(const int width, const int 
     if (window == nullptr) {
         std::cout << "No window" << std::endl;
         glfwTerminate();
-        return std::nullopt;
+        throw std::runtime_error("No window");
     }
 
     glfwMakeContextCurrent(window);
 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
         std::cout << "No GLAD" << std::endl;
-        return std::nullopt;
+        throw std::runtime_error("No GLAD");
     }
     glViewport(0, 0, width, height);
 

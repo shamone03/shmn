@@ -3,7 +3,7 @@
 
 #include <window/window.h>
 
-std::optional<GLFWwindow*> window::initialize_window(const int width, const int height) {
+std::optional<GLFWwindow*> shmn::window::initialize_window(const int width, const int height) {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);

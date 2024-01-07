@@ -6,9 +6,9 @@
 
 #include "shader/shader_tools/shader_tools.h"
 
-Shader::Shader(const std::string_view pathToVert, std::string_view path_to_frag) {
+shmn::shader::Shader::Shader(const std::string_view pathToVert, const std::string_view pathToFrag) {
     const auto vertSource = get_source(pathToVert.data());
-    const auto fragSource = get_source(path_to_frag.data());
+    const auto fragSource = get_source(pathToFrag.data());
 
     m_id = shader_tools::create_program(vertSource, fragSource);
 
@@ -19,25 +19,25 @@ Shader::Shader(const std::string_view pathToVert, std::string_view path_to_frag)
     }
 }
 
-void Shader::use() const {
+void shmn::shader::Shader::use() const {
     glUseProgram(*m_id);
 }
 
-void Shader::set_float(const std::string_view name, const GLfloat value) const {
+void shmn::shader::Shader::set_float(const std::string_view name, const GLfloat value) const {
     const auto location = glGetUniformLocation(*m_id, name.data());
     check_uniform_location(location, name);
     glUniform1f(location, value);
 }
 
-void Shader::check_uniform_location(const GLint location, const std::string_view name) {
+void shmn::shader::Shader::check_uniform_location(const GLint location, const std::string_view name) {
     if (location < 0) {
-        const auto message = "No Uniform with name" + std::string(name.data());
+        const auto message = "No Uniform with name: " + std::string(name.data());
         std::cerr << message << std::endl;
         throw std::invalid_argument(message);
     }
 }
 
-const char* Shader::get_source(const std::string_view path) {
+const char* shmn::shader::Shader::get_source(const std::string_view path) {
     std::ifstream vertex(path.data());
 
     std::string source;
@@ -48,9 +48,10 @@ const char* Shader::get_source(const std::string_view path) {
             line.clear();
         }
     } else {
-        throw std::ios_base::failure("Could not open" + std::string(path.data()));
+        const auto message = "Could not open" + std::string(path.data());
+        std::cerr << message << std::endl;
+        throw std::ios_base::failure(message);
     }
 
     return source.c_str();
 }
-

@@ -7,16 +7,8 @@
 #include "window/window.h"
 
 int main() {
-	const auto window = window::initialize_window(1200, 1200);
-
-	const Shader shader("vert.glsl", "frag.glsl"); 
-
-	// const auto colorUniformLocation = glGetUniformLocation(*programID, "setColor");
-
-	// if (colorUniformLocation < 0) {
-	// 	std::cout << "Could not find uniform" << std::endl;
-	// 	return 1;
-	// }
+	const auto window = shmn::window::initialize_window(1200, 1200);
+	const shmn::shader::Shader shader("vert.glsl", "frag.glsl");
 	
 	constexpr GLfloat vertices[] = {
 		// positions         // colors
@@ -57,8 +49,7 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		shader.use();
-		shader.set_float("setAslpha", std::abs(std::sin(glfwGetTime())));
-		// glUniform4f(colorUniformLocation, red, std::abs(std::cos(glfwGetTime())), red, 1.0f);
+		shader.set_float("setColor", std::abs(std::sin(glfwGetTime())));
 		
 		glBindVertexArray(vaoID);
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);

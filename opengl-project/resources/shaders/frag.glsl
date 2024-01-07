@@ -3,8 +3,8 @@
 out vec4 outColor;
 in vec4 vertColor;
 
-uniform float setAlpha;
+uniform float setColor;
 
 void main() {
-    outColor = vec4(setAlpha, setAlpha, setAlpha, 1);
+    outColor = vec4(setColor, setColor, setColor, 1);
 }

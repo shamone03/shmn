@@ -8,7 +8,7 @@ namespace {
         const GLuint id = glCreateShader(type);
         glShaderSource(id, 1, &source, NULL);
         glCompileShader(id);
-			
+        
         // error check
         GLint success = 0;
         glGetShaderiv(id, GL_COMPILE_STATUS, &success);
@@ -24,7 +24,7 @@ namespace {
     }
 }
 
-std::optional<GLuint> shader_tools::create_program(const char* vertSource, const char* fragSource) {
+std::optional<GLuint> shmn::shader::shader_tools::create_program(const char* vertSource, const char* fragSource) {
     const auto vertexShaderID = compile_shader(GL_VERTEX_SHADER, vertSource);
     const auto fragShaderID = compile_shader(GL_FRAGMENT_SHADER, fragSource);
 

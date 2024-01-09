@@ -29,6 +29,12 @@ void shmn::shader::Shader::set_float(const std::string_view name, const GLfloat 
     glUniform1f(location, value);
 }
 
+void shmn::shader::Shader::set_int(std::string_view name, GLint value) const {
+    const auto location = glGetUniformLocation(*m_id, name.data());
+    check_uniform_location(location, name);
+    glUniform1i(location, value);
+}
+
 void shmn::shader::Shader::check_uniform_location(const GLint location, const std::string_view name) {
     if (location < 0) {
         const auto message = "No Uniform with name: " + std::string(name.data());

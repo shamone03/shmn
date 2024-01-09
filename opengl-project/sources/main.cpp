@@ -2,6 +2,7 @@
 #include <optional>
 #include <fstream>
 #include <string>
+#include <vector>
 
 #include "shader/shader.h"
 #include "window/window.h"
@@ -63,39 +64,51 @@ namespace shmn::examples {
 	}
 
 	void draw_image() {
-		const auto window = shmn::window::initialize_window(1920, 1080, "saul");
+		const auto window = shmn::window::initialize_window(360, 360, "saul");
 		const shmn::shader::Shader shader("texture_vert.glsl", "texture_frag.glsl");
-		std::cout << "Shader Version: " << "0.4";
-		GLuint textureID;
 		
-		glGenTextures(1, &textureID);
-		glBindTexture(GL_TEXTURE_2D, textureID);
+		constexpr auto version = 0.3;
+		// std::cout << "Shader Version: " << version << std::endl;
+		
+		const std::vector<std::string> files = {"saul.jpg", "hamster.png" };
+		std::vector<GLuint> textures{};
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		int width, height, numChannels;
-		const std::string fileName = "saul.jpg";
-		stbi_set_flip_vertically_on_load(true);
-		GLubyte* data = stbi_load(fileName.c_str(), &width, &height, &numChannels, 0);
-		if (!data) {
-			const auto message = "Unable to read " + fileName;
-			std::cerr << message << std::endl;
-			throw std::runtime_error(message);
+		for (const auto& file : files) {
+			GLuint id;
+			glGenTextures(1, &id);
+			glBindTexture(GL_TEXTURE_2D, id);
+			textures.push_back(id);
+			
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		
+			int width, height, numChannels;
+			stbi_set_flip_vertically_on_load(true);
+			GLubyte* data = stbi_load(file.c_str(), &width, &height, &numChannels, 0);
+			
+			if (!data) {
+				const auto message = "Unable to read " + file;
+				std::cerr << message << std::endl;
+				throw std::runtime_error(message);
+			}
+			if (numChannels == 4) {
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data); // first rgb is for output texture, second is for input image
+			}
+			if (numChannels == 3) {
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); // first rgb is for output texture, second is for input image
+			}
+			glGenerateMipmap(GL_TEXTURE_2D);
+			stbi_image_free(data);
 		}
 		
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); // first rgb is for output texture, second is for input image
-		stbi_image_free(data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
 		constexpr float vertices[] = {
 			// positions          // colors           // texture coords
-			0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f,   // top right
-			0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f,   // bottom right
+			0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+			0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
 		   -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-		   -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f    // top left 
+		   -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 	   };
 
 		const GLuint indices[] = {
@@ -123,18 +136,38 @@ namespace shmn::examples {
 		
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*) (6 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(2);
+
+		for (auto i = 0; i < textures.size(); i++) {
+			shader.use();
+			if (files[i] == "saul.jpg") {
+				shader.set_int("saul_jpg", i);
+			}
+			if (files[i] == "hamster.png") {
+				shader.set_int("hamster_png", i);
+			}
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, textures[i]);
+		}
 		
 		while (!glfwWindowShouldClose(*window)) {
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 			
-			shader.use();
-			shader.set_float("time", glfwGetTime());
-			
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			glBindVertexArray(vaoID);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
-			glBindVertexArray(0);
+			for (auto i = 0; i < textures.size(); i++) {
+				shader.use();
+				if (files[i] == "saul.jpg") {
+					shader.set_int("saul_jpg", i);
+				}
+				if (files[i] == "hamster.png") {
+					shader.set_int("hamster_png", i);
+				}
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE_2D, textures[i]);
+				
+				glBindVertexArray(vaoID);
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+			}
+
 
 			glfwSwapBuffers(*window);
 			glfwPollEvents();

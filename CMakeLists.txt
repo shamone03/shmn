@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.23)
-project(opengl-project)
+project(shmn)
 
 find_package(glfw3 REQUIRED CONFIG)
 find_package(glad REQUIRED CONFIG)
 find_package(stb REQUIRED CONFIG)
+find_package(glm REQUIRED CONFIG)
 
 set(SOURCES 
     ${PROJECT_NAME}/sources/main.cpp
@@ -16,6 +17,10 @@ set(INCLUDE
     ${PROJECT_NAME}/include/window/window.h
     ${PROJECT_NAME}/include/shader/shader_tools/shader_tools.h
     ${PROJECT_NAME}/include/shader/shader.h
+	${PROJECT_NAME}/include/transform/transform.h
+	${PROJECT_NAME}/include/transform/position.h
+	${PROJECT_NAME}/include/transform/rotation.h
+	${PROJECT_NAME}/include/transform/scale.h
 )
 file(GLOB_RECURSE SHADERS
     ${PROJECT_NAME}/resources/shaders/*.glsl
@@ -37,6 +42,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
 target_link_libraries(${PROJECT_NAME} PRIVATE stb::stb)
+target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
 
 add_custom_command(
     TARGET ${PROJECT_NAME} PRE_BUILD

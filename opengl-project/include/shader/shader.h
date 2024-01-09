@@ -2,14 +2,16 @@
 #include <optional>
 #include <string>
 #include <glad/glad.h>
+#include <glm/fwd.hpp>
 
 namespace shmn::shader {
-    class Shader {
+    class shader {
     public:
-        Shader(std::string_view pathToVert, std::string_view pathToFrag);
+        shader(std::string_view pathToVert, std::string_view pathToFrag);
 
         void use() const;
-
+        
+        // void set_mat(std::string_view name, glm::mat4 value) const;
         void set_float(std::string_view name, GLfloat value) const;
         void set_int(std::string_view name, GLint value) const;
     private:
@@ -18,4 +20,5 @@ namespace shmn::shader {
         static const char* get_source(std::string_view path);
         std::optional<GLuint> m_id;
     };
+
 }

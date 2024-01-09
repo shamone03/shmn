@@ -3,13 +3,13 @@
 
 #include <window/window.h>
 
-std::optional<GLFWwindow*> shmn::window::initialize_window(const int width, const int height) {
+std::optional<GLFWwindow*> shmn::window::initialize_window(const int width, const int height, const std::string_view title) {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(width, height, "Hi", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(width, height, title.data(), NULL, NULL);
     if (window == nullptr) {
         std::cerr << "No window" << std::endl;
         glfwTerminate();

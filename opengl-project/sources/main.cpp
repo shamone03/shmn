@@ -7,8 +7,8 @@
 #include "window/window.h"
 
 namespace shmn::examples {
-	void example1() {
-		const auto window = shmn::window::initialize_window(1200, 1200);
+	void draw_shapes() {
+		const auto window = shmn::window::initialize_window(1200, 1200, "shape");
 		const shmn::shader::Shader shader("vert.glsl", "frag.glsl");
 		constexpr GLfloat vertices[] = {
 			// positions         // colors
@@ -62,10 +62,10 @@ namespace shmn::examples {
 		shmn::window::close_window();
 	}
 
-	void example2() {
-		const auto window = shmn::window::initialize_window(720, 720);
+	void draw_image() {
+		const auto window = shmn::window::initialize_window(1920, 1080, "saul");
 		const shmn::shader::Shader shader("texture_vert.glsl", "texture_frag.glsl");
-		
+		std::cout << "Shader Version: " << "0.4";
 		GLuint textureID;
 		
 		glGenTextures(1, &textureID);
@@ -78,6 +78,7 @@ namespace shmn::examples {
 
 		int width, height, numChannels;
 		const std::string fileName = "saul.jpg";
+		stbi_set_flip_vertically_on_load(true);
 		GLubyte* data = stbi_load(fileName.c_str(), &width, &height, &numChannels, 0);
 		if (!data) {
 			const auto message = "Unable to read " + fileName;
@@ -91,10 +92,10 @@ namespace shmn::examples {
 
 		constexpr float vertices[] = {
 			// positions          // colors           // texture coords
-			0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-			0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+			0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f,   // top right
+			0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f,   // bottom right
 		   -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-		   -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+		   -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f    // top left 
 	   };
 
 		const GLuint indices[] = {
@@ -124,11 +125,12 @@ namespace shmn::examples {
 		glEnableVertexAttribArray(2);
 		
 		while (!glfwWindowShouldClose(*window)) {
-			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 			
 			shader.use();
-
+			shader.set_float("time", glfwGetTime());
+			
 			glBindTexture(GL_TEXTURE_2D, textureID);
 			glBindVertexArray(vaoID);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
@@ -143,9 +145,6 @@ namespace shmn::examples {
 }
 
 int main() {
-
-	shmn::examples::example2();
-	
-
+	shmn::examples::draw_image();
 	return 0;
 }

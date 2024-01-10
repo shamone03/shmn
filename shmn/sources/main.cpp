@@ -8,15 +8,9 @@
 #include <glm/ext/matrix_transform.hpp>
 
 #include "shader/shader.h"
+#include "utils/error.h"
+#include "utils/stats.h"
 #include "window/window.h"
-
-namespace shmn::utils::stats {
-	std::string get_stats(float delta, float running) {
-		std::stringstream ss;
-		ss << "Delta Time: " << delta << " Time Running: " << running << std::setprecision(5) << std::fixed;
-		return ss.str();
-	}
-}
 
 namespace shmn::examples {
 	void draw_shapes() {
@@ -255,8 +249,6 @@ namespace shmn::examples {
 		
 		while (!glfwWindowShouldClose(window)) {
 			const auto start = glfwGetTime();
-
-			// std::cout << glfwGetTime() << " " << check.get_rotation().x << std::setprecision(5) << '\r';
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 			
@@ -277,28 +269,14 @@ namespace shmn::examples {
 				glBindVertexArray(vaoID);
 				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 			}
-
-			if (GLenum code; (code = glGetError()) != GL_NO_ERROR) {
-				std::string error;
-				switch (code)
-				{
-					case GL_INVALID_ENUM:                  	error = "INVALID_ENUM"; break;
-					case GL_INVALID_VALUE:                 	error = "INVALID_VALUE"; break;
-					case GL_INVALID_OPERATION:             	error = "INVALID_OPERATION"; break;
-					case GL_STACK_OVERFLOW:                	error = "STACK_OVERFLOW"; break;
-					case GL_STACK_UNDERFLOW:               	error = "STACK_UNDERFLOW"; break;
-					case GL_OUT_OF_MEMORY:                 	error = "OUT_OF_MEMORY"; break;
-					case GL_INVALID_FRAMEBUFFER_OPERATION: 	error = "INVALID_FRAMEBUFFER_OPERATION"; break;
-					default:								error = "UNKNOWN"; break;
-				}
-				std::cerr << error << std::endl;
-			}
+			
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 			
 			delta = glfwGetTime() - start;
 			sum += delta;
 			std::cout << shmn::utils::stats::get_stats(delta, sum) << '\r';
+			shmn::utils::error::gl_check_error();
 		} 
 
 	}

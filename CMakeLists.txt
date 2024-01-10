@@ -11,6 +11,7 @@ set(SOURCES
     ${PROJECT_NAME}/sources/window/window.cpp
     ${PROJECT_NAME}/sources/shader/shader_tools/shader_tools.cpp
     ${PROJECT_NAME}/sources/shader/shader.cpp
+	${PROJECT_NAME}/sources/transform/transform.cpp
 )
 set(INCLUDE 
     ${PROJECT_NAME}/include/main.h
@@ -21,6 +22,8 @@ set(INCLUDE
 	${PROJECT_NAME}/include/transform/position.h
 	${PROJECT_NAME}/include/transform/rotation.h
 	${PROJECT_NAME}/include/transform/scale.h
+	${PROJECT_NAME}/include/utils/error.h
+	${PROJECT_NAME}/include/utils/stats.h
 )
 file(GLOB_RECURSE SHADERS
     ${PROJECT_NAME}/resources/shaders/*.glsl

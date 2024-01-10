@@ -6,10 +6,10 @@ layout (location = 2) in vec2 textCoord;
 out vec4 vertColor;
 out vec2 vertTextCoord;
 
-uniform float time;
+uniform mat4 transform;
 
 void main() {
-    gl_Position = vec4(pos, 1);
+    gl_Position = transform * vec4(pos, 1.0f);
     vertColor = vec4(color, 1f);
     vertTextCoord = textCoord;
 }

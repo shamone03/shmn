@@ -23,11 +23,11 @@ void shmn::shader::shader::use() const {
     glUseProgram(*m_id);
 }
 
-// void shmn::shader::shader::set_mat(std::string_view name, glm::mat4<GLfloat> value) const {
-//     const auto location = glGetUniformLocation(*m_id, name.data());
-//     check_uniform_location(location, name);
-//     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
-// }
+void shmn::shader::shader::set_mat(std::string_view name, glm::mat4x4 value) const {
+    const auto location = glGetUniformLocation(*m_id, name.data());
+    check_uniform_location(location, name);
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+}
 
 void shmn::shader::shader::set_float(const std::string_view name, const GLfloat value) const {
     const auto location = glGetUniformLocation(*m_id, name.data());

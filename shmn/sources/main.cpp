@@ -1,12 +1,22 @@
 #include <main.h>
 #include <optional>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <glm/glm.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 #include "shader/shader.h"
 #include "window/window.h"
+
+namespace shmn::utils::stats {
+	std::string get_stats(float delta, float running) {
+		std::stringstream ss;
+		ss << "Delta Time: " << delta << " Time Running: " << running << std::setprecision(5) << std::fixed;
+		return ss.str();
+	}
+}
 
 namespace shmn::examples {
 	void draw_shapes() {
@@ -165,27 +175,26 @@ namespace shmn::examples {
 		shmn::window::close_window();
 	}
 
-	void draw_transformations() {
-		const auto window = window::initialize_window(720, 720, "saul");
+	void draw_transformations(GLFWwindow* window) {
+		
 		const auto shader = shmn::shader::shader("transform_vert.glsl", "transform_frag.glsl");
 		
-		constexpr glm::mat4x4 transformation(
-			1, 0, 0, 5,
-			0, 1, 0, 5,
-			0, 0, 1, 5,
-			0, 0, 0, 1
-		);
-		constexpr glm::vec4 position(
-			2,
-			2,
-			2,
-			1
-		);
-
-		transform::rotation rot(0);
 		const std::vector<std::string> files = {"saul.jpg", "hamster.png" };
 		std::vector<GLuint> textures{};
 
+		constexpr float vertices[] = {
+			// positions          // colors           // texture coords
+			0.9f,  0.9f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+			0.9f, -0.9f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+		   -0.9f, -0.9f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+		   -0.9f,  0.9f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+	   };
+
+		const GLuint indices[] = {
+			0, 1, 2,
+			2, 3, 0
+		};
+		
 		for (const auto& file : files) {
 			GLuint id;
 			glGenTextures(1, &id);
@@ -216,46 +225,46 @@ namespace shmn::examples {
 			stbi_image_free(data);
 		}
 		
-		constexpr float vertices[] = {
-			// positions          // colors           // texture coords
-			0.9f,  0.9f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-			0.9f, -0.9f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-		   -0.9f, -0.9f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-		   -0.9f,  0.9f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
-	   };
-
-		const GLuint indices[] = {
-			0, 1, 2,
-			2, 3, 0
-		};
-		
 		GLuint vboID, eboID, vaoID;
-		glGenBuffers(1, &vboID);
-		glGenBuffers(1, &eboID);
-		glGenVertexArrays(1, &vaoID);
+		{   
+			glGenBuffers(1, &vboID);
+			glGenBuffers(1, &eboID);
+			glGenVertexArrays(1, &vaoID);
 
-		glBindVertexArray(vaoID);
-		glBindBuffer(GL_ARRAY_BUFFER, vboID);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+			glBindVertexArray(vaoID);
+			glBindBuffer(GL_ARRAY_BUFFER, vboID);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
-		glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
+			glEnableVertexAttribArray(0);
+			
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*) (3 * sizeof(GLfloat)));
+			glEnableVertexAttribArray(1);
+			
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*) (6 * sizeof(GLfloat)));
+			glEnableVertexAttribArray(2);
+		}
 		
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*) (3 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(1);
+		shmn::transform::transform transform[2];
+		float delta = 0.0;
+		float curRotation = 0;
+		float sum = 0;
 		
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*) (6 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(2);
-		
-		while (!glfwWindowShouldClose(*window)) {
+		while (!glfwWindowShouldClose(window)) {
+			const auto start = glfwGetTime();
+
+			// std::cout << glfwGetTime() << " " << check.get_rotation().x << std::setprecision(5) << '\r';
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
-
+			
 			for (auto i = 0; i < textures.size(); i++) {
 				shader.use();
+				transform[i].rotate(delta * 90 / 20, glm::vec3(0, 0, 1));
+
+				shader.set_mat("transform", transform[i].get_transform());
 				if (files[i] == "saul.jpg") {
 					shader.set_int("saul_jpg", i);
 				}
@@ -269,17 +278,37 @@ namespace shmn::examples {
 				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 			}
 
-
-			glfwSwapBuffers(*window);
+			if (GLenum code; (code = glGetError()) != GL_NO_ERROR) {
+				std::string error;
+				switch (code)
+				{
+					case GL_INVALID_ENUM:                  	error = "INVALID_ENUM"; break;
+					case GL_INVALID_VALUE:                 	error = "INVALID_VALUE"; break;
+					case GL_INVALID_OPERATION:             	error = "INVALID_OPERATION"; break;
+					case GL_STACK_OVERFLOW:                	error = "STACK_OVERFLOW"; break;
+					case GL_STACK_UNDERFLOW:               	error = "STACK_UNDERFLOW"; break;
+					case GL_OUT_OF_MEMORY:                 	error = "OUT_OF_MEMORY"; break;
+					case GL_INVALID_FRAMEBUFFER_OPERATION: 	error = "INVALID_FRAMEBUFFER_OPERATION"; break;
+					default:								error = "UNKNOWN"; break;
+				}
+				std::cerr << error << std::endl;
+			}
+			glfwSwapBuffers(window);
 			glfwPollEvents();
-		}
+			
+			delta = glfwGetTime() - start;
+			sum += delta;
+			std::cout << shmn::utils::stats::get_stats(delta, sum) << '\r';
+		} 
 
-		shmn::window::close_window();
 	}
 }
 
 int main() {
-	shmn::examples::draw_transformations();
-	// shmn::examples::draw_shapes();
+	const auto window = shmn::window::initialize_window(1080, 1080, "saul");
+	std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
+	shmn::examples::draw_transformations(*window);
+	shmn::window::close_window();
+	
 	return 0;
 }

@@ -9,6 +9,7 @@
 - should have a clean, transparent and easy to use API
 - should be easy to modify and customize
 - should be capable of 3D
+- should have good error checking and recovery
 
 ## Developement
 1. clone the project `git clone https://github.com/shamone03/shmn`

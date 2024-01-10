@@ -1,6 +1,11 @@
-# Run the following commands to get setup
-1. `conan install . --build=missing`
-2. `cmake --preset conan-default`
+# Game Engine Made in C++ (in development)!
+- this is my attempt at making a game engine
 
-- you might need to change the build type in your IDE depending on your conan and cmake setup
-- if everything worked you should be able to see a basic triangle being drawn on your screen
+## Progress
+- can render and blend images!
+- download the latest release to see more!
+
+## Goals
+- should be capable of 3D
+- should have a clean, transparent and easy to use API
+- should be easy to modify and customize

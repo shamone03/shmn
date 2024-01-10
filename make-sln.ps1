@@ -17,3 +17,4 @@ cmake --preset conan-default
 cd build
 cmake --build . --config Release
 cmake --open .
+cd ..

@@ -168,8 +168,8 @@ void shmn::examples::draw_image() {
 }
 
 void shmn::examples::draw_transformations(GLFWwindow* window) {
-	
 	const auto shader = shmn::shader::shader("transform_vert.glsl", "transform_frag.glsl");
+	
 	std::vector<std::pair<GLuint, std::string>> textures = shmn::utils::get_textures({"hamster.png", "saul.jpg" });
 
 	constexpr float vertices[] {

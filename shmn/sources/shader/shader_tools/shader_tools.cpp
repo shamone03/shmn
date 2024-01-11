@@ -24,12 +24,12 @@ namespace {
     }
 }
 
-std::optional<GLuint> shmn::shader::shader_tools::create_program(const char* vertSource, const char* fragSource) {
-    const auto vertexShaderID = compile_shader(GL_VERTEX_SHADER, vertSource);
-    const auto fragShaderID = compile_shader(GL_FRAGMENT_SHADER, fragSource);
+std::optional<GLuint> shmn::shader::shader_tools::create_program(std::string_view vertSource, std::string_view fragSource) {
+    const auto vertexShaderID = compile_shader(GL_VERTEX_SHADER, vertSource.data());
+    const auto fragShaderID = compile_shader(GL_FRAGMENT_SHADER, fragSource.data());
 
     if (!vertexShaderID.has_value() || !fragShaderID.has_value()) return std::nullopt;
-		
+
     const GLuint programID = glCreateProgram();
     glAttachShader(programID, *vertexShaderID);
     glAttachShader(programID, *fragShaderID);

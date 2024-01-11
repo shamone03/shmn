@@ -1,4 +1,5 @@
-﻿#version 460 core
+﻿
+#version 460 core
 in vec4 vertColor;
 in vec2 vertTextCoord;
 

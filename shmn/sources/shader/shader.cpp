@@ -13,9 +13,9 @@ shmn::shader::shader::shader(const std::string_view pathToVert, const std::strin
     const auto fragSource = get_source(pathToFrag.data());
 
     m_id = shader_tools::create_program(vertSource, fragSource);
-
+    
     if (!m_id.has_value()) {
-        const auto message = "Could not create shader program";
+        const auto message = "Could not create shader program ";
         std::cerr << message << std::endl;
         throw std::runtime_error(message);
     }
@@ -51,7 +51,7 @@ void shmn::shader::shader::check_uniform_location(const GLint location, const st
     }
 }
 
-const char* shmn::shader::shader::get_source(const std::string_view path) {
+std::string shmn::shader::shader::get_source(const std::string_view path) {
     std::ifstream vertex(path.data());
 
     std::string source;
@@ -61,11 +61,12 @@ const char* shmn::shader::shader::get_source(const std::string_view path) {
             source += line + '\n';
             line.clear();
         }
+        source += '\0';
     } else {
         const auto message = "Could not open " + std::string(path.data());
         std::cerr << message << std::endl;
         throw std::ios_base::failure(message);
     }
 
-    return source.c_str();
+    return source;
 }

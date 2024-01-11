@@ -17,7 +17,7 @@ namespace shmn::shader {
     private:
         static void check_uniform_location(GLint location, std::string_view name);
         
-        static const char* get_source(std::string_view path);
+        static std::string get_source(std::string_view path);
         std::optional<GLuint> m_id;
     };
 

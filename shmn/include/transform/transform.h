@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include <glm/glm.hpp>
 
-// TODO: replace with strong type checking
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+// TODO: replace with strong type checking
 #include "position.h"
 #include "rotation.h"
 #include "scale.h"
@@ -13,11 +13,7 @@ namespace shmn::transform {
     class transform final {
     public:
         ~transform() = default;
-
-        transform() :
-            m_pos(0, 0, 0),
-            m_rot(0, 0, 0),
-            m_scl(1, 1, 1) {}
+        transform() = default;
         
         transform(const transform&) = delete;
         transform& operator=(const transform&) = delete;
@@ -37,18 +33,25 @@ namespace shmn::transform {
 
         glm::mat4 get_transform() const { return m_transformation; }
 
-        void rotate(float angle, glm::vec3 axis);
-        void translate(glm::vec3 trans);
-        void scale(glm::vec3 scale);
+        void rotate(float angle, const glm::vec3& axis);
+        void translate(const glm::vec3& trans);
+        void scale(const glm::vec3& scale);
         float const* get_data() const;
 
+        // transform operator*(const transform& other) const {
+        //     // TODO: find a way to get the pos, rot and scl to return a shmn::transform::transform with the correct member vars
+        //     // return m_transformation * other.get_transform();
+        //     return {};
+        // }
+        
     private:
         glm::mat4 m_transformation = glm::mat4(1.f);
 
         // user convenience
-        glm::vec3 m_pos;
-        glm::vec3 m_rot;
-        glm::vec3 m_scl;
+        glm::vec3 m_pos{0.f, 0.f, 0.f};
+        glm::vec3 m_rot{0.f, 0.f , 0.f};
+        glm::vec3 m_scl{1.f, 1.f, 1.f};
+        
     };
 
 }

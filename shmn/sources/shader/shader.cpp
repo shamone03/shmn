@@ -3,9 +3,11 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+
 #include <glm/gtc/type_ptr.hpp>
 
 #include "shader/shader_tools/shader_tools.h"
+
 shmn::shader::shader::shader(const std::string_view pathToVert, const std::string_view pathToFrag) {
     const auto vertSource = get_source(pathToVert.data());
     const auto fragSource = get_source(pathToFrag.data());

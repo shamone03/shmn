@@ -1,7 +1,7 @@
+#include "shader/shader_tools/shader_tools.h"
+
 #include <iostream>
 #include <optional>
-#include <glad/glad.h>
-#include <shader/shader_tools/shader_tools.h>
 
 namespace {
     std::optional<GLuint> compile_shader(const GLuint type, const char* source) {

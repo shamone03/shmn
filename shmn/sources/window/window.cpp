@@ -1,7 +1,7 @@
-#include <iostream>
-#include <glad/glad.h>
+#include "window/window.h"
 
-#include <window/window.h>
+#include <iostream>
+
 
 std::optional<GLFWwindow*> shmn::window::initialize_window(const int width, const int height, const std::string_view title) {
     glfwInit();
@@ -15,7 +15,7 @@ std::optional<GLFWwindow*> shmn::window::initialize_window(const int width, cons
         glfwTerminate();
         throw std::runtime_error("No window");
     }
-
+    
     glfwMakeContextCurrent(window);
 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {

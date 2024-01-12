@@ -12,7 +12,7 @@
 #include "utils/utils.h"
 
 void shmn::examples::draw_shapes() {
-	const auto window = shmn::window::initialize_window(1200, 1200, "shape");
+	const auto window = shmn::window::window(1200, 1200, "shape");
 	const shmn::shader::shader shader("vert.glsl", "frag.glsl");
 	constexpr GLfloat vertices[] = {
 		// positions         // colors
@@ -63,11 +63,10 @@ void shmn::examples::draw_shapes() {
 		glfwPollEvents();
 	}
 
-	shmn::window::close_window();
 }
 
 void shmn::examples::draw_image() {
-	const auto window = shmn::window::initialize_window(360, 360, "saul");
+	const auto window = shmn::window::window(360, 360, "saul");
 	const shmn::shader::shader shader("texture_vert.glsl", "texture_frag.glsl");
 	
 	constexpr auto version = 0.3;
@@ -164,7 +163,6 @@ void shmn::examples::draw_image() {
 		glfwPollEvents();
 	}
 	
-	shmn::window::close_window();
 }
 
 void shmn::examples::draw_transformations(GLFWwindow* window) {

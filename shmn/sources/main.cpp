@@ -21,7 +21,7 @@ void process_input(GLFWwindow* window, bool& fill) {
 		!fill ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
-void shmn::examples::draw_3d(GLFWwindow* window) {
+void shmn::examples::draw_3d(shmn::window::window window) {
 const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
 	std::vector<std::pair<GLuint, std::string>> textures = shmn::utils::get_textures({ "saul.jpg" });
 
@@ -91,20 +91,20 @@ const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
 	float time = 0;
 
 	shmn::transform::transform model;
-	// model.rotate(-45.f, {1, 0, 0});
+
 	model.scale({.5f, .5f, .5f});
 
 	glm::mat4 view(1.f);
 	view = glm::translate(view, {0, 0, -3.f});
 
 	glm::mat4 projection(1.f);
-	projection = glm::perspective(glm::radians(45.f), 1920.f / 1080.f, .1f, 100.f);
+	projection = glm::perspective(glm::radians(45.f), window.get_aspect(), .1f, 100.f);
 
 	shader.use();
 	for (int i = 0; i < textures.size(); i++) {
 		shader.set_int(textures[i].second, i);
 	}
-	while (!glfwWindowShouldClose(window)) {
+	while (!glfwWindowShouldClose(*window)) {
 		const auto start = glfwGetTime();
 		glClearColor(.5f, .5f, .5f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -128,24 +128,22 @@ const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
 		shader.set_mat("model", model.get_transform());
 		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+		
+		window.update();
 		shmn::utils::error::gl_check_error();
 		
 		delta = glfwGetTime() - start;
 		time += delta;
 		std::cout << shmn::utils::stats::get_stats(delta, time) << '\r';
 	}
-	shmn::window::close_window();
 
 }
 
 int main() {
-	const auto window = shmn::window::initialize_window(1600, 900, "saul");
+	const auto window = shmn::window::window(1600, 900, "saul");
 	std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
 	
-	shmn::examples::draw_3d(*window);
-	shmn::window::close_window();
+	shmn::examples::draw_3d(window);
 	
 	return 0;
 }

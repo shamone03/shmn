@@ -2,21 +2,21 @@
 
 #include <iostream>
 
-
-std::optional<GLFWwindow*> shmn::window::initialize_window(const int width, const int height, const std::string_view title) {
+shmn::window::window::window(const int width, const int height, const std::string_view title) :
+m_width(width), m_height(height), m_title(title) {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(width, height, title.data(), NULL, NULL);
-    if (window == nullptr) {
+    m_GLFWwindow = glfwCreateWindow(width, height, title.data(), NULL, NULL);
+    if (m_GLFWwindow == nullptr) {
         std::cerr << "No window" << std::endl;
         glfwTerminate();
         throw std::runtime_error("No window");
     }
     
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(m_GLFWwindow);
 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
         std::cerr << "No GLAD" << std::endl;
@@ -24,9 +24,23 @@ std::optional<GLFWwindow*> shmn::window::initialize_window(const int width, cons
     }
     glViewport(0, 0, width, height);
 
-    return window;
+    shmn::utils::error::gl_check_error();
 }
 
-void shmn::window::close_window() {
+void shmn::window::window::update() const {
+    swap_buffers();
+    poll_events();
+}
+
+shmn::window::window::~window() {
     glfwTerminate();
 }
+
+void shmn::window::window::swap_buffers() const {
+    glfwSwapBuffers(m_GLFWwindow);
+}
+
+void shmn::window::window::poll_events() {
+    glfwPollEvents();
+}
+

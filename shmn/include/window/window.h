@@ -9,6 +9,8 @@ namespace shmn::window {
     public:
         window(int width, int height, std::string_view title);
         ~window();
+        void close();
+        bool is_open() const;
 
         int get_width() const { return m_width; }
         int get_height() const { return m_height; }
@@ -25,6 +27,7 @@ namespace shmn::window {
     private:
         int m_width;
         int m_height;
+        bool m_open;
         std::string m_title;
         GLFWwindow* m_GLFWwindow;
     };

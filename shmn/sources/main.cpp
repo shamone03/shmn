@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <limits>
 
 #include "examples/examples.h"
 #include "shader/shader.h"
@@ -12,17 +13,17 @@
 #include "utils/utils.h"
 #include "window/window.h"
 // TODO: make class	
-void process_input(GLFWwindow* window, bool& fill) {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, true);
+void process_input(shmn::window::window& window, bool& fill) {
+	if (glfwGetKey(*window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		window.close();
 	}
-	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+	if (glfwGetKey(*window, GLFW_KEY_P) == GLFW_PRESS) {
 		fill = !fill;
 		!fill ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
-void shmn::examples::draw_3d(shmn::window::window window) {
-const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
+void shmn::examples::draw_3d(shmn::window::window& window) {
+	const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
 	std::vector<std::pair<GLuint, std::string>> textures = shmn::utils::get_textures({ "saul.jpg" });
 
 	constexpr float vertices[] {
@@ -93,7 +94,11 @@ const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
 	shmn::transform::transform model;
 
 	model.scale({.5f, .5f, .5f});
+	std::srand(69);
 
+	model.translate({std::rand() % 4, std::rand() % 2, std::rand() % 6});
+	
+	
 	glm::mat4 view(1.f);
 	view = glm::translate(view, {0, 0, -3.f});
 
@@ -104,7 +109,9 @@ const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
 	for (int i = 0; i < textures.size(); i++) {
 		shader.set_int(textures[i].second, i);
 	}
-	while (!glfwWindowShouldClose(*window)) {
+	bool fillMode;
+	while (window.is_open()) {
+		process_input(window, fillMode);
 		const auto start = glfwGetTime();
 		glClearColor(.5f, .5f, .5f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -125,6 +132,8 @@ const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
 		
 		model.rotate(90 * delta, { 0, 1, 0});
 		model.translate({0, std::sin(time) * .5f * delta, 0});
+
+
 		shader.set_mat("model", model.get_transform());
 		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -140,7 +149,7 @@ const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
 }
 
 int main() {
-	const auto window = shmn::window::window(1600, 900, "saul");
+	auto window = shmn::window::window(1600, 900, "saul");
 	std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
 	
 	shmn::examples::draw_3d(window);

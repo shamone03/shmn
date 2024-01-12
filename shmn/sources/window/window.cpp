@@ -3,7 +3,7 @@
 #include <iostream>
 
 shmn::window::window::window(const int width, const int height, const std::string_view title) :
-m_width(width), m_height(height), m_title(title) {
+m_width(width), m_height(height), m_title(title), m_open(true) {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -24,7 +24,7 @@ m_width(width), m_height(height), m_title(title) {
     }
     glViewport(0, 0, width, height);
 
-    shmn::utils::error::gl_check_error();
+    // shmn::utils::error::gl_check_error();
 }
 
 void shmn::window::window::update() const {
@@ -36,6 +36,16 @@ shmn::window::window::~window() {
     glfwTerminate();
 }
 
+void shmn::window::window::close() {
+    m_open = false;
+    glfwSetWindowShouldClose(m_GLFWwindow, true);
+}
+
+bool shmn::window::window::is_open() const {
+    // will probably change to glfwShouldWindowClose
+    return m_open;
+}
+
 void shmn::window::window::swap_buffers() const {
     glfwSwapBuffers(m_GLFWwindow);
 }
@@ -43,4 +53,3 @@ void shmn::window::window::swap_buffers() const {
 void shmn::window::window::poll_events() {
     glfwPollEvents();
 }
-

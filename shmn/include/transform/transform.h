@@ -22,11 +22,7 @@ namespace shmn::transform {
 
         transform(const position position, const rotation rotation, const scale scale)
             : m_pos(position), m_rot(rotation), m_scl(scale) {}
-
-        void set_rotation(const rotation& rot) { m_rot = rot; }
-        void set_position(const position& pos) { m_pos = pos; }
-        void set_scale(const scale& scale) { m_scl = scale; }
-
+        
         glm::vec3 get_position() const { return m_pos; }
         glm::vec3 get_rotation() const { return m_rot; }
         glm::vec3 get_scale() const { return m_scl; }
@@ -43,7 +39,7 @@ namespace shmn::transform {
         //     // return m_transformation * other.get_transform();
         //     return {};
         // }
-        
+
     private:
         glm::mat4 m_transformation = glm::mat4(1.f);
 

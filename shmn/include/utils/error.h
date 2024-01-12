@@ -19,6 +19,7 @@ namespace shmn::utils::error {
                 default:								error = "UNKNOWN"; break;
             }
             std::cerr << error << std::endl;
+            throw std::runtime_error(error);
         }
     }
 }

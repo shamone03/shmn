@@ -8,15 +8,10 @@
 
 std::vector<std::pair<GLuint, std::string>> shmn::utils::get_textures(const std::vector<std::string>& files) {
     std::vector<std::pair<GLuint, std::string>> textures;
-    for (const auto& file : files) {
+    for (auto file : files) {
         GLuint id;
         glGenTextures(1, &id);
         glBindTexture(GL_TEXTURE_2D, id);
-	
-        auto name = file.substr(0, file.find('.'));
-        auto ext = file.substr(name.length() + 1, file.find('.'));
-	
-        textures.emplace_back(id, name + "_" + ext);
 	
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -41,6 +36,10 @@ std::vector<std::pair<GLuint, std::string>> shmn::utils::get_textures(const std:
         }
         glGenerateMipmap(GL_TEXTURE_2D);
         stbi_image_free(data);
+
+        // to find corresponding uniform var names
+        file[file.find('.')] = '_';
+        textures.emplace_back(id, file);
     }
 	return textures;
 }

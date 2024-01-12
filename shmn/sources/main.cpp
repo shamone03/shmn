@@ -11,7 +11,7 @@
 #include "utils/stats.h"
 #include "utils/utils.h"
 #include "window/window.h"
-
+// TODO: make class	
 void process_input(GLFWwindow* window, bool& fill) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
@@ -22,7 +22,7 @@ void process_input(GLFWwindow* window, bool& fill) {
 	}
 }
 void shmn::examples::draw_3d(GLFWwindow* window) {
-	const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
+const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
 	std::vector<std::pair<GLuint, std::string>> textures = shmn::utils::get_textures({ "saul.jpg" });
 
 	constexpr float vertices[] {
@@ -86,27 +86,25 @@ void shmn::examples::draw_3d(GLFWwindow* window) {
 	}
 
 	glEnable(GL_DEPTH_TEST);
-
+	
 	float delta = 0;
 	float time = 0;
 
 	shmn::transform::transform model;
 	// model.rotate(-45.f, {1, 0, 0});
-	model.scale({1.f, 1.f, 1.f});
-	
+	model.scale({.5f, .5f, .5f});
+
 	glm::mat4 view(1.f);
-	view = glm::translate(view, {0, 0, 0.f});
+	view = glm::translate(view, {0, 0, -3.f});
 
 	glm::mat4 projection(1.f);
-	projection = glm::perspective(glm::radians(180.f), 1600.f / 900.f, .1f, 100.f);
+	projection = glm::perspective(glm::radians(45.f), 1920.f / 1080.f, .1f, 100.f);
 
 	shader.use();
 	for (int i = 0; i < textures.size(); i++) {
 		shader.set_int(textures[i].second, i);
 	}
-	bool fillMode = true;
 	while (!glfwWindowShouldClose(window)) {
-		process_input(window, fillMode);
 		const auto start = glfwGetTime();
 		glClearColor(.5f, .5f, .5f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -126,7 +124,7 @@ void shmn::examples::draw_3d(GLFWwindow* window) {
 		glBindVertexArray(vaoID);
 		
 		model.rotate(90 * delta, { 0, 1, 0});
-
+		model.translate({0, std::sin(time) * .5f * delta, 0});
 		shader.set_mat("model", model.get_transform());
 		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -139,6 +137,7 @@ void shmn::examples::draw_3d(GLFWwindow* window) {
 		std::cout << shmn::utils::stats::get_stats(delta, time) << '\r';
 	}
 	shmn::window::close_window();
+
 }
 
 int main() {

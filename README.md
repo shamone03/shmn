@@ -3,6 +3,7 @@
 
 ## Progress
 - can render and blend images!
+- has perspective projection (3D)
 - download the latest release to see more!
 
 ## Goals

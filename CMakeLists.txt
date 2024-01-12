@@ -14,6 +14,7 @@ set(SOURCES
 	${PROJECT_NAME}/sources/transform/transform.cpp
 	${PROJECT_NAME}/sources/utils/utils.cpp
 	${PROJECT_NAME}/sources/examples/examples.cpp
+	${PROJECT_NAME}/sources/camera/camera.cpp
 )
 set(INCLUDE 
     ${PROJECT_NAME}/include/main.h
@@ -28,6 +29,8 @@ set(INCLUDE
 	${PROJECT_NAME}/include/utils/stats.h
 	${PROJECT_NAME}/include/examples/examples.h
 	${PROJECT_NAME}/include/utils/utils.h
+	${PROJECT_NAME}/include/camera/camera.h
+	${PROJECT_NAME}/include/game_object/game_object.h
 )
 file(GLOB_RECURSE SHADERS
     ${PROJECT_NAME}/resources/shaders/*.glsl

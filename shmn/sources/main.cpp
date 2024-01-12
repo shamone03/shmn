@@ -103,7 +103,7 @@ void shmn::examples::draw_3d(shmn::window::window& window) {
 	view = glm::translate(view, {0, 0, -3.f});
 
 	glm::mat4 projection(1.f);
-	projection = glm::perspective(glm::radians(45.f), window.get_aspect(), .1f, 100.f);
+	projection = glm::perspective(glm::radians(90.f), window.get_aspect(), .1f, 100.f);
 
 	shader.use();
 	for (int i = 0; i < textures.size(); i++) {

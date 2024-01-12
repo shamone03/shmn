@@ -15,6 +15,6 @@
 ## Developement
 1. clone the project `git clone https://github.com/shamone03/shmn`
 2. download cmake and conan
-3. run the powershell script to generate the project `./make-sln.ps1`
+3. run the powershell script with the build type to generate the project `./make-sln.ps1 Release`
 
 - currently only tested in visual studio 2022 and on windows

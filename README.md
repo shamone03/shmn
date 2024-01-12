@@ -12,7 +12,7 @@
 - should have good error checking and recovery
 - ray tracing?
 
-## Developement
+## Development
 1. clone the project `git clone https://github.com/shamone03/shmn`
 2. download cmake and conan
 3. run the powershell script with the build type to generate the project `./make-sln.ps1 Release`

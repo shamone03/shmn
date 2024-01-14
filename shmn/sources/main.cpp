@@ -6,6 +6,7 @@
 #include <vector>
 #include <limits>
 
+#include "buffer/buffer.h"
 #include "examples/examples.h"
 #include "shader/shader.h"
 #include "utils/error.h"
@@ -26,7 +27,7 @@ void shmn::examples::draw_3d(shmn::window::window& window) {
 	const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
 	std::vector<std::pair<GLuint, std::string>> textures = shmn::utils::get_textures({ "saul.jpg" });
 
-	constexpr float vertices[] {
+	std::vector vertices = {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
 		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -70,22 +71,18 @@ void shmn::examples::draw_3d(shmn::window::window& window) {
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
-	GLuint vboID, vaoID;
-	{
-		glGenBuffers(1, &vboID);
-		glGenVertexArrays(1, &vaoID);
+	GLuint vaoID;
+	
+	glGenVertexArrays(1, &vaoID);
+	glBindVertexArray(vaoID);
+	const shmn::buffer::buffer vbo(GL_ARRAY_BUFFER, vertices);
 
-		glBindVertexArray(vaoID);
-		glBindBuffer(GL_ARRAY_BUFFER, vboID);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-		
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), 0);
-		glEnableVertexAttribArray(0);
-		
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*) (3 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(1);
-	}
-
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), 0);
+	glEnableVertexAttribArray(0);
+	
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*) (3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+	
 	glEnable(GL_DEPTH_TEST);
 	
 	float delta = 0;

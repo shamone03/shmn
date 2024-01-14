@@ -15,6 +15,7 @@ set(SOURCES
 	${PROJECT_NAME}/sources/utils/utils.cpp
 	${PROJECT_NAME}/sources/examples/examples.cpp
 	${PROJECT_NAME}/sources/camera/camera.cpp
+	${PROJECT_NAME}/sources/buffer/buffer.cpp
 )
 set(INCLUDE 
     ${PROJECT_NAME}/include/main.h
@@ -31,6 +32,7 @@ set(INCLUDE
 	${PROJECT_NAME}/include/utils/utils.h
 	${PROJECT_NAME}/include/camera/camera.h
 	${PROJECT_NAME}/include/game_object/game_object.h
+	${PROJECT_NAME}/include/buffer/buffer.h
 )
 file(GLOB_RECURSE SHADERS
     ${PROJECT_NAME}/resources/shaders/*.glsl

@@ -73,18 +73,11 @@ void shmn::examples::draw_3d(shmn::window::window& window) {
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
-	const std::vector positions {
-		glm::vec3( 0.0f,  0.0f,  0.0f), 
-		glm::vec3( 2.0f,  5.0f, -15.0f), 
-		glm::vec3(-1.5f, -2.2f, -2.5f),  
-		glm::vec3(-3.8f, -2.0f, -12.3f),  
-		glm::vec3( 2.4f, -0.4f, -3.5f),  
-		glm::vec3(-1.7f,  3.0f, -7.5f),  
-		glm::vec3( 1.3f, -2.0f, -2.5f),  
-		glm::vec3( 1.5f,  2.0f, -2.5f), 
-		glm::vec3( 1.5f,  0.2f, -1.5f), 
-		glm::vec3(-1.3f,  1.0f, -1.5f)  
-	};
+	std::vector<glm::vec3> positions(100);
+
+	std::srand(69);
+	for (int i = 0; i < 10; i++) { positions.emplace_back(std::rand() % 4, std::rand() % 4, 0.f); }
+	
 
 	const shmn::vertex_array::vertex_array vao;
 	shmn::buffer::buffer vbo(GL_ARRAY_BUFFER);
@@ -117,7 +110,6 @@ void shmn::examples::draw_3d(shmn::window::window& window) {
 	bool fillMode;
 	shader.set_mat("projection", projection);
 	shader.set_mat("view", view.get_transform());
-	
 	while (window.is_open()) {
 		process_input(window, fillMode);
 		const auto start = glfwGetTime();
@@ -130,11 +122,13 @@ void shmn::examples::draw_3d(shmn::window::window& window) {
 			i++;
 		}
 		
-		for (const auto& position : positions) {
+		for (int i = 0; const auto& position : positions) {
 			shmn::transform::transform model;
+			// model.rotate(i++ * 15, position);
+			model.scale({.5f, .5f, .5f});
 			model.translate(position);
 			shader.set_mat("model", model.get_transform());
-			glDrawArrays(GL_TRIANGLES, 0, 36); // shader gets called for each vertex
+			glDrawArrays(GL_TRIANGLES, 0, 36); // vertex shader gets called for each vertex
 		}
 		
 		window.update();

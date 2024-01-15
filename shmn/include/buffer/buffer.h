@@ -6,8 +6,9 @@ namespace shmn::buffer {
     class buffer {
     public:
         buffer() = delete;
-        buffer(GLenum type, const std::vector<GLfloat>& vertices);
-
+        buffer(GLenum type);
+        ~buffer();
+        
         void bind() const;
         void set_vertices(const std::vector<GLfloat>& vertices);
         void unbind() const;

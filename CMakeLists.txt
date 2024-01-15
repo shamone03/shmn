@@ -16,6 +16,7 @@ set(SOURCES
 	${PROJECT_NAME}/sources/examples/examples.cpp
 	${PROJECT_NAME}/sources/camera/camera.cpp
 	${PROJECT_NAME}/sources/buffer/buffer.cpp
+	${PROJECT_NAME}/sources/vertex_array/vertex_array.cpp
 )
 set(INCLUDE 
     ${PROJECT_NAME}/include/main.h
@@ -33,6 +34,7 @@ set(INCLUDE
 	${PROJECT_NAME}/include/camera/camera.h
 	${PROJECT_NAME}/include/game_object/game_object.h
 	${PROJECT_NAME}/include/buffer/buffer.h
+	${PROJECT_NAME}/include/vertex_array/vertex_array.h
 )
 file(GLOB_RECURSE SHADERS
     ${PROJECT_NAME}/resources/shaders/*.glsl

@@ -2,10 +2,12 @@
 
 #include "utils/error.h"
 
-shmn::buffer::buffer::buffer(GLenum type, const std::vector<GLfloat>& vertices): m_type(type), m_vertices(vertices) {
+shmn::buffer::buffer::buffer(GLenum type): m_type(type) {
     glGenBuffers(1, &m_id);
-    bind(); // bind then buffer data!
-    set_vertices(vertices);
+}
+
+shmn::buffer::buffer::~buffer() {
+    unbind();
 }
 
 void shmn::buffer::buffer::bind() const {

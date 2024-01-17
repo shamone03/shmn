@@ -27,13 +27,16 @@ namespace shmn::transform {
         glm::vec3 get_rotation() const { return m_rot; }
         glm::vec3 get_scale() const { return m_scl; }
 
+        glm::vec3 get_up() const;
+        glm::vec3 get_right() const;
+        glm::vec3 get_forward() const;
         glm::mat4 get_transform() const { return m_transformation; }
 
         void rotate(float angle, const glm::vec3& axis);
         void translate(const glm::vec3& trans);
         void scale(const glm::vec3& scale);
         float const* get_data() const;
-
+        void clear();
         // transform operator*(const transform& other) const {
         //     // TODO: find a way to get the pos, rot and scl to return a shmn::transform::transform with the correct member vars
         //     // return m_transformation * other.get_transform();

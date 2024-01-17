@@ -6,7 +6,11 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "camera/camera.h"
+#include "camera/camera.h"
 #include "shader/shader_tools/shader_tools.h"
+#include "transform/position.h"
+#include "transform/transform.h"
 
 shmn::shader::shader::shader(const std::string_view pathToVert, const std::string_view pathToFrag) {
     const auto vertSource = get_source(pathToVert.data());
@@ -25,7 +29,7 @@ void shmn::shader::shader::use() const {
     glUseProgram(*m_id);
 }
 
-void shmn::shader::shader::set_mat(std::string_view name, glm::mat4x4 value) const {
+void shmn::shader::shader::set_mat(std::string_view name, const glm::mat4x4& value) const {
     const auto location = glGetUniformLocation(*m_id, name.data());
     check_uniform_location(location, name);
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));

@@ -15,6 +15,24 @@ void shmn::transform::transform::scale(const glm::vec3& scale) {
     m_scl += scale;
 }
 
+glm::vec3 shmn::transform::transform::get_up() const {
+    
+}
+
+glm::vec3 shmn::transform::transform::get_right() const {
+}
+
+glm::vec3 shmn::transform::transform::get_forward() const {
+    return glm::cross(get_right(), get_up());
+}
+
 float const* shmn::transform::transform::get_data() const {
     return glm::value_ptr(m_transformation);
+}
+
+void shmn::transform::transform::clear() {
+    m_transformation = glm::mat4(1.f);
+    m_pos = {0, 0, 0};
+    m_rot = {0, 0, 0};
+    m_scl = {1, 1, 1};
 }

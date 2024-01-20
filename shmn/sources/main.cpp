@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <limits>
+#include <unordered_map>
 
 #include "buffer/buffer.h"
 #include "examples/examples.h"
@@ -28,7 +29,8 @@ void process_input(shmn::window::window& window, bool& fill) {
 void shmn::examples::draw_3d(shmn::window::window& window) {
 	const auto shader = shmn::shader::shader("3d_vert.glsl", "3d_frag.glsl");
 	std::vector<std::pair<GLuint, std::string>> textures = shmn::utils::get_textures({ "saul.jpg" });
-
+	const glm::vec3 origin = {0, 0, 0};
+	
 	std::vector vertices {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -73,20 +75,19 @@ void shmn::examples::draw_3d(shmn::window::window& window) {
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
-	std::vector positions {
-		glm::vec3( 0.0f,  0.0f,  0.0f), 
-		glm::vec3( 2.0f,  5.0f, -15.0f), 
-		glm::vec3(-1.5f, -2.2f, -2.5f),  
-		glm::vec3(-3.8f, -2.0f, -12.3f),  
-		glm::vec3( 2.4f, -0.4f, -3.5f),  
-		glm::vec3(-1.7f,  3.0f, -7.5f),  
-		glm::vec3( 1.3f, -2.0f, -2.5f),  
-		glm::vec3( 1.5f,  2.0f, -2.5f), 
-		glm::vec3( 1.5f,  0.2f, -1.5f), 
-		glm::vec3(-1.3f,  1.0f, -1.5f)  
-
+	std::vector<std::pair<shmn::transform::transform, glm::vec3>> cubes {
+		{{}, glm::vec3( 0.0f,  0.0f,  0.0f)}, 
+		{{}, glm::vec3( 2.0f,  5.0f, -15.0f)}, 
+		{{}, glm::vec3(-1.5f, -2.2f, -2.5f)},  
+		{{}, glm::vec3(-3.8f, -2.0f, -12.3f)},  
+		{{}, glm::vec3( 2.4f, -0.4f, -3.5f)},  
+		{{}, glm::vec3(-1.7f,  3.0f, -7.5f)},  
+		{{}, glm::vec3( 1.3f, -2.0f, -2.5f)},  
+		{{}, glm::vec3( 1.5f,  2.0f, -2.5f)}, 
+		{{}, glm::vec3( 1.5f,  0.2f, -1.5f)}, 
+		{{}, glm::vec3(-1.3f,  1.0f, -1.5f)}
 	};
-
+	
 
 	const shmn::vertex_array::vertex_array vao;
 	shmn::buffer::buffer vbo(GL_ARRAY_BUFFER);
@@ -106,9 +107,15 @@ void shmn::examples::draw_3d(shmn::window::window& window) {
 	float delta = 0;
 	float time = 0;
 	
-	shmn::transform::transform camera;
-	camera.translate({0, 0, -3});
-
+	shmn::transform::transform view;
+	view.translate({0, 0, -3});
+	
+	glm::vec3 up = {0, 1, 0};
+	glm::vec3 camera = {0, 0, 3};
+	auto camDir = glm::normalize(camera - origin);
+	auto camRight = glm::normalize(glm::cross(up, camDir));
+	auto camUp = glm::normalize(glm::cross(camDir, camRight));
+	
 	glm::mat4 projection(1.f);
 	projection = glm::perspective(glm::radians(90.f), window.get_aspect(), .1f, 100.f);
 
@@ -118,9 +125,11 @@ void shmn::examples::draw_3d(shmn::window::window& window) {
 	}
 	bool fillMode;
 	shader.set_mat("projection", projection);
-	shader.set_mat("view", camera.get_transform());
-	shmn::transform::transform model;
+	shader.set_mat("view", view.get_transform());
 	
+	for (auto& [model, position] : cubes) {
+		model.translate(position);
+	}
 	while (window.is_open()) {
 		process_input(window, fillMode);
 		const auto start = glfwGetTime();
@@ -128,22 +137,20 @@ void shmn::examples::draw_3d(shmn::window::window& window) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		for (int i = 0; const auto& [id, _] : textures) {
-			glActiveTexture(GL_TEXTURE0 + i);
+			glActiveTexture(GL_TEXTURE0 + i++);
 			glBindTexture(GL_TEXTURE_2D, id);
-			i++;
 		}
 		
-		for (int i = 0; const auto& position : positions) {
-			model.rotate(15.f * i++, position);
-			model.translate(position);
+		for (int i = 0; auto& [model, position] : cubes) {
+			model.rotate(15.f * i++ * delta * (i % 2), position);
 			shader.set_mat("model", model.get_transform());
 			glDrawArrays(GL_TRIANGLES, 0, 36); // vertex shader gets called for each vertex
-			model.clear();
 		}
-		
+		view.translate({0, 0, std::sin(view.get_position().z) * delta});
+		shader.set_mat("view", view.get_transform());
 		window.update();
 		shmn::utils::error::gl_check_error();
-		
+
 		delta = glfwGetTime() - start;
 		time += delta;
 		std::cout << shmn::utils::stats::get_stats(delta, time) << '\r';
